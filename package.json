@@ -23,7 +23,6 @@
     "i18n-iso-countries": "^5.4.0",
     "moment": "^2.27.0",
     "moment-timezone": "^0.5.31",
-    "puppeteer": "^4.0.1",
     "tree-kill": "^1.2.2",
     "tslib": "^2.0.0"
   },
