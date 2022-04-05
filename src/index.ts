@@ -257,9 +257,7 @@ export class LinkedInProfileScraper {
       this.browser = await puppeteer.launch({
         headless: this.options.headless,
         args: [
-          ...(this.options.headless
-            ? "---single-process"
-            : "---start-maximized"),
+          this.options.headless ? "---single-process" : "---start-maximized",
           "--no-sandbox",
           "--disable-setuid-sandbox",
           "--proxy-server='direct://",
