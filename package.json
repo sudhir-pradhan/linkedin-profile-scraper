@@ -2,8 +2,8 @@
   "name": "linkedin-profile-scraper",
   "version": "2.3.1",
   "description": "LinkedIn profile scraper returning structured profile data in JSON. Works in 2020.",
-  "main": "src/index.ts",
-  "types": "src/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
     "start": "ts-node-dev -r dotenv/config --inspect=9230 --respawn --transpileOnly ./src/examples/server.ts",
