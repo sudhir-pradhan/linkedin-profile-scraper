@@ -11,7 +11,8 @@
     "test": "NODE_ENV=test jest --coverage",
     "update": "npx npm-check --update",
     "release": "release-it",
-    "example:module": "ts-node-dev src/examples/module.ts"
+    "example:module": "ts-node-dev src/examples/module.ts",
+    "prepare": "npm run build"
   },
   "author": "Jordy van den Aardweg <jordyvandenaardweg@gmail.com> (https://github.com/jvandenaardweg)",
   "repository": {
