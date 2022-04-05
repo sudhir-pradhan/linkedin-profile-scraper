@@ -693,25 +693,31 @@ export class LinkedInProfileScraper {
         const url = window.location.href;
 
         const fullNameElement = profileSection?.querySelector(
-          ".pv-top-card--list li:first-child"
+          ".pv-text-details__left-panel div:first-child"
         );
         const fullName = fullNameElement?.textContent || null;
 
-        const titleElement = profileSection?.querySelector("h2");
+        const titleElement = profileSection?.querySelector(
+          ".pv-text-details__left-panel div:nth-child(2)"
+        );
         const title = titleElement?.textContent || null;
 
-        const locationElement = profileSection?.querySelector(
-          ".pv-top-card--list.pv-top-card--list-bullet.mt1 li:first-child"
-        );
+        let locationElement = profileSection?.querySelectorAll(
+          ".pv-text-details__left-panel"
+        )[1];
+
+        // @ts-ignore
+        locationElement = locationElement?.querySelector("span");
         const location = locationElement?.textContent || null;
 
-        const photoElement =
-          profileSection?.querySelector(".pv-top-card__photo") ||
-          profileSection?.querySelector(".profile-photo-edit__preview");
+        const photoElement = profileSection?.querySelector(
+          ".pv-top-card--photo .pv-top-card-profile-picture img.pv-top-card-profile-picture__image"
+        );
+
         const photo = photoElement?.getAttribute("src") || null;
 
         const descriptionElement = document.querySelector(
-          ".pv-about__summary-text .lt-line-clamp__raw-line"
+          ".pv-shared-text-with-see-more  span.visually-hidden"
         ); // Is outside "profileSection"
         const description = descriptionElement?.textContent || null;
 

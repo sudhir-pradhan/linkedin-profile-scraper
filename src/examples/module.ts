@@ -6,7 +6,7 @@ import { LinkedInProfileScraper } from "../index";
   const scraper = new LinkedInProfileScraper({
     sessionCookieValue: `${process.env.LINKEDIN_SESSION_COOKIE_VALUE}`,
     keepAlive: false,
-    headless: false,
+    headless: !false,
     timeout: 50 * 1000,
   });
 
