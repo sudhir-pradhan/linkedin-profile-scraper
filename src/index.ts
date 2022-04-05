@@ -309,7 +309,7 @@ export class LinkedInProfileScraper {
 
       statusLog(logSection, "Puppeteer launched!");
 
-      await this.checkIfLoggedIn();
+      // await this.checkIfLoggedIn();
 
       statusLog(logSection, "Done!");
     } catch (err) {
@@ -602,6 +602,21 @@ export class LinkedInProfileScraper {
         waitUntil: "networkidle2",
         timeout: this.options.timeout,
       });
+
+      const url = page.url();
+
+      const isLoggedIn = !url.endsWith("/login");
+
+      // await page.close(); //it causes error in case of latest puppeteer
+
+      if (isLoggedIn) {
+        statusLog(logSection, "All good. We are still logged in.");
+      } else {
+        const errorMessage =
+          'Bad news, we are not logged in! Your session seems to be expired. Use your browser to login again with your LinkedIn credentials and extract the "li_at" cookie value for the "sessionCookieValue" option.';
+        statusLog(logSection, errorMessage);
+        throw new SessionExpired(errorMessage);
+      }
 
       statusLog(logSection, "LinkedIn profile page loaded!", scraperSessionId);
 
