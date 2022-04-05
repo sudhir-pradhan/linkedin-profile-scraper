@@ -554,7 +554,7 @@ export class LinkedInProfileScraper {
 
     const isLoggedIn = !url.endsWith("/login");
 
-    await page.close();
+    // await page.close(); //it causes error in case of latest puppeteer
 
     if (isLoggedIn) {
       statusLog(logSection, "All good. We are still logged in.");
