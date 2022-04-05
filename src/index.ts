@@ -630,6 +630,7 @@ export class LinkedInProfileScraper {
 
       statusLog(logSection, "Parsing data...", scraperSessionId);
 
+      // FIX-fix expanding See More buttons
       // Only click the expanding buttons when they exist
       const expandButtonsSelectors = [
         ".pv-profile-section.pv-about-section .lt-line-clamp__more", // About
@@ -699,6 +700,8 @@ export class LinkedInProfileScraper {
           }
         }
       }
+
+      // await new Promise((resolve) => setTimeout(resolve, 50 * 1000));
 
       statusLog(logSection, "Parsing profile data...", scraperSessionId);
 
