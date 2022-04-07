@@ -1,3 +1,4 @@
+// @ts-nocheck
 import puppeteer, { Page, Browser } from "puppeteer";
 import treeKill from "tree-kill";
 
@@ -499,7 +500,7 @@ export class LinkedInProfileScraper {
           await this.browser.close();
           statusLog(loggerPrefix, "Closed browser!");
 
-          const browserProcessPid = this.browser.process().pid;
+          const browserProcessPid = this.browser.process()?.pid;
 
           // Completely kill the browser process to prevent zombie processes
           // https://docs.browserless.io/blog/2019/03/13/more-observations.html#tip-2-when-you-re-done-kill-it-with-fire
@@ -630,76 +631,76 @@ export class LinkedInProfileScraper {
 
       statusLog(logSection, "Parsing data...", scraperSessionId);
 
-      // FIX-fix expanding See More buttons
+      // TODO-Not Needed now -fix expanding See More buttons
       // Only click the expanding buttons when they exist
-      const expandButtonsSelectors = [
-        ".pv-profile-section.pv-about-section .lt-line-clamp__more", // About
-        "#experience-section .pv-profile-section__see-more-inline.link", // Experience
-        ".pv-profile-section.education-section button.pv-profile-section__see-more-inline", // Education
-        '.pv-skill-categories-section [data-control-name="skill_details"]', // Skills
-      ];
+      // const expandButtonsSelectors = [
+      //   ".pv-profile-section.pv-about-section .lt-line-clamp__more", // About
+      //   "#experience-section .pv-profile-section__see-more-inline.link", // Experience
+      //   ".pv-profile-section.education-section button.pv-profile-section__see-more-inline", // Education
+      //   '.pv-skill-categories-section [data-control-name="skill_details"]', // Skills
+      // ];
 
-      const seeMoreButtonsSelectors = [
-        '.pv-entity__description .lt-line-clamp__line.lt-line-clamp__line--last .lt-line-clamp__more[href="#"]',
-        '.lt-line-clamp__more[href="#"]:not(.lt-line-clamp__ellipsis--dummy)',
-      ];
+      // const seeMoreButtonsSelectors = [
+      //   '.pv-entity__description .lt-line-clamp__line.lt-line-clamp__line--last .lt-line-clamp__more[href="#"]',
+      //   '.lt-line-clamp__more[href="#"]:not(.lt-line-clamp__ellipsis--dummy)',
+      // ];
 
-      statusLog(
-        logSection,
-        'Expanding all sections by clicking their "See more" buttons',
-        scraperSessionId
-      );
+      // statusLog(
+      //   logSection,
+      //   'Expanding all sections by clicking their "See more" buttons',
+      //   scraperSessionId
+      // );
 
-      for (const buttonSelector of expandButtonsSelectors) {
-        try {
-          if ((await page.$(buttonSelector)) !== null) {
-            statusLog(
-              logSection,
-              `Clicking button ${buttonSelector}`,
-              scraperSessionId
-            );
-            await page.click(buttonSelector);
-          }
-        } catch (err) {
-          statusLog(
-            logSection,
-            `Could not find or click expand button selector "${buttonSelector}". So we skip that one.`,
-            scraperSessionId
-          );
-        }
-      }
+      // for (const buttonSelector of expandButtonsSelectors) {
+      //   try {
+      //     if ((await page.$(buttonSelector)) !== null) {
+      //       statusLog(
+      //         logSection,
+      //         `Clicking button ${buttonSelector}`,
+      //         scraperSessionId
+      //       );
+      //       await page.click(buttonSelector);
+      //     }
+      //   } catch (err) {
+      //     statusLog(
+      //       logSection,
+      //       `Could not find or click expand button selector "${buttonSelector}". So we skip that one.`,
+      //       scraperSessionId
+      //     );
+      //   }
+      // }
 
       // To give a little room to let data appear. Setting this to 0 might result in "Node is detached from document" errors
       await page.waitFor(100);
 
-      statusLog(
-        logSection,
-        'Expanding all descriptions by clicking their "See more" buttons',
-        scraperSessionId
-      );
+      // statusLog(
+      //   logSection,
+      //   'Expanding all descriptions by clicking their "See more" buttons',
+      //   scraperSessionId
+      // );
 
-      for (const seeMoreButtonSelector of seeMoreButtonsSelectors) {
-        const buttons = await page.$$(seeMoreButtonSelector);
+      // for (const seeMoreButtonSelector of seeMoreButtonsSelectors) {
+      //   const buttons = await page.$$(seeMoreButtonSelector);
 
-        for (const button of buttons) {
-          if (button) {
-            try {
-              statusLog(
-                logSection,
-                `Clicking button ${seeMoreButtonSelector}`,
-                scraperSessionId
-              );
-              await button.click();
-            } catch (err) {
-              statusLog(
-                logSection,
-                `Could not find or click see more button selector "${button}". So we skip that one.`,
-                scraperSessionId
-              );
-            }
-          }
-        }
-      }
+      //   for (const button of buttons) {
+      //     if (button) {
+      //       try {
+      //         statusLog(
+      //           logSection,
+      //           `Clicking button ${seeMoreButtonSelector}`,
+      //           scraperSessionId
+      //         );
+      //         await button.click();
+      //       } catch (err) {
+      //         statusLog(
+      //           logSection,
+      //           `Could not find or click see more button selector "${button}". So we skip that one.`,
+      //           scraperSessionId
+      //         );
+      //       }
+      //     }
+      //   }
+      // }
 
       // await new Promise((resolve) => setTimeout(resolve, 50 * 1000));
 
@@ -769,71 +770,93 @@ export class LinkedInProfileScraper {
 
       statusLog(logSection, `Parsing experiences data...`, scraperSessionId);
 
-      const rawExperiencesData: RawExperience[] = await page.$$eval(
-        "#experience-section ul > .ember-view",
-        (nodes) => {
-          let data: RawExperience[] = [];
+      // await page.waitForNavigation();
+      await new Promise((resolve) => setTimeout(resolve, 1 * 1000));
 
-          // Using a for loop so we can use await inside of it
-          for (const node of nodes) {
-            const titleElement = node.querySelector("h3");
-            const title = titleElement?.textContent || null;
+      // const rawExperiencesData: RawExperience[] = await page.$$(
+      //   "main > section.artdeco-card.ember-view");
 
-            const employmentTypeElement = node.querySelector(
-              "span.pv-entity__secondary-title"
-            );
-            const employmentType = employmentTypeElement?.textContent || null;
-
-            const companyElement = node.querySelector(
-              ".pv-entity__secondary-title"
-            );
-            const companyElementClean =
-              companyElement && companyElement?.querySelector("span")
-                ? companyElement?.removeChild(
-                    companyElement.querySelector("span") as Node
-                  ) && companyElement
-                : companyElement || null;
-            const company = companyElementClean?.textContent || null;
-
-            const descriptionElement = node.querySelector(
-              ".pv-entity__description"
-            );
-            const description = descriptionElement?.textContent || null;
-
-            const dateRangeElement = node.querySelector(
-              ".pv-entity__date-range span:nth-child(2)"
-            );
-            const dateRangeText = dateRangeElement?.textContent || null;
-
-            const startDatePart = dateRangeText?.split("–")[0] || null;
-            const startDate = startDatePart?.trim() || null;
-
-            const endDatePart = dateRangeText?.split("–")[1] || null;
-            const endDateIsPresent =
-              endDatePart?.trim().toLowerCase() === "present" || false;
-            const endDate =
-              endDatePart && !endDateIsPresent ? endDatePart.trim() : "Present";
-
-            const locationElement = node.querySelector(
-              ".pv-entity__location span:nth-child(2)"
-            );
-            const location = locationElement?.textContent || null;
-
-            data.push({
-              title,
-              company,
-              employmentType,
-              location,
-              startDate,
-              endDate,
-              endDateIsPresent,
-              description,
-            });
-          }
-
-          return data;
-        }
+      const rawExperiencesDataEles = await page.$$(
+        "main > section.artdeco-card.ember-view"
       );
+
+      let rawExperiencesData: RawExperience[] = [];
+      for (const handle of rawExperiencesDataEles) {
+        const val = await handle.evaluate((ele) => {
+          const txtH = ele.querySelector(
+            ".pvs-header__container .pvs-header__title span.visually-hidden"
+          )?.textContent;
+          let tempData = [];
+          if (txtH === "Experience") {
+            const expElements = ele.querySelectorAll(
+              ".pvs-list__outer-container ul li.artdeco-list__item"
+            );
+
+            for (const liEle of expElements) {
+              let titleElement = liEle.querySelector(
+                "div > div.display-flex.flex-column.full-width.align-self-center > div.display-flex.flex-row.justify-space-between > div.display-flex.flex-column.full-width > div > span > span.visually-hidden"
+              );
+              const title = titleElement?.textContent || null;
+
+              const employmentTypeElement = liEle.querySelector(
+                "div > div.display-flex.flex-column.full-width.align-self-center > div.display-flex.flex-row.justify-space-between > div.display-flex.flex-column.full-width > span:nth-child(2) > span.visually-hidden"
+              );
+
+              let employmentType = employmentTypeElement?.textContent || null;
+
+              employmentType = employmentType?.split("·")[1].trim() || null;
+
+              const companyElement = employmentType || "";
+
+              const company = companyElement?.split("·")[0].trim() || null;
+
+              const descriptionElement = liEle.querySelector(
+                "div > div.display-flex.flex-column.full-width.align-self-center > div.pvs-list__outer-container > ul > li > div > ul > li > div > div > div > div > span.visually-hidden"
+              );
+              const description = descriptionElement?.textContent || null;
+
+              const dateRangeElement = liEle.querySelector(
+                "div > div.display-flex.flex-column.full-width.align-self-center > div.display-flex.flex-row.justify-space-between > div.display-flex.flex-column.full-width > span:nth-child(3) > span.visually-hidden"
+              );
+              const dateRangeText = dateRangeElement?.textContent || null;
+
+              const startDatePart = dateRangeText?.split("–")[0] || null;
+              const startDate = startDatePart?.trim() || null;
+
+              const endDatePart = dateRangeText?.split("–")[1] || null;
+              const endDateIsPresent =
+                endDatePart?.trim().toLowerCase() === "present" || false;
+              const endDate =
+                endDatePart && !endDateIsPresent
+                  ? endDatePart.trim()
+                  : "Present";
+
+              const locationElement = liEle.querySelector(
+                "div > div.display-flex.flex-column.full-width.align-self-center > div.display-flex.flex-row.justify-space-between > div.display-flex.flex-column.full-width > span:nth-child(4) > span.visually-hidden"
+              );
+              const location = locationElement?.textContent || null;
+
+              tempData.push({
+                title,
+                company,
+                employmentType,
+                location,
+                startDate,
+                endDate,
+                endDateIsPresent,
+                description,
+              });
+            }
+
+            return tempData;
+          }
+        });
+        val && rawExperiencesData.push(val);
+      }
+
+      // await new Promise((resolve) => setTimeout(resolve, 50 * 1000));
+
+      // console.log(rawExperiencesData);
 
       // Convert the raw data to clean data using our utils
       // So we don't have to inject our util methods inside the browser context, which is too damn difficult using TypeScript
@@ -880,6 +903,7 @@ export class LinkedInProfileScraper {
 
       statusLog(logSection, `Parsing education data...`, scraperSessionId);
 
+      // TODO- parse education data
       const rawEducationData: RawEducation[] = await page.$$eval(
         "#education-section ul > .ember-view",
         (nodes) => {
@@ -1085,7 +1109,7 @@ export class LinkedInProfileScraper {
         statusLog(logSection, "Done. Puppeteer is being kept alive in memory.");
 
         // Only close the current page, we do not need it anymore
-        await page.close();
+        // await page.close(); //make it close in prod
       }
 
       return {
