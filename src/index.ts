@@ -1080,8 +1080,6 @@ export class LinkedInProfileScraper {
 
       statusLog(logSection, `Parsing skills data...`, scraperSessionId);
 
-      // TODO- parse skill data
-
       let skills: Skill[] = [];
       for (const handle of rawDataEles) {
         const val = await handle.evaluate((ele) => {
@@ -1123,8 +1121,6 @@ export class LinkedInProfileScraper {
         });
         val && skills.push(val);
       }
-
-      console.log(skills);
 
       statusLog(
         logSection,
