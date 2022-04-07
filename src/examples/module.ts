@@ -22,5 +22,5 @@ import { LinkedInProfileScraper } from "../index";
   // This will free up your system's memory. Otherwise Puppeteer will sit idle in the background consuming memory.
   // await scraper.close()
 
-  console.log(result);
+  console.log("result: ", result);
 })();

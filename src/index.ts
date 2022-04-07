@@ -776,12 +776,12 @@ export class LinkedInProfileScraper {
       // const rawExperiencesData: RawExperience[] = await page.$$(
       //   "main > section.artdeco-card.ember-view");
 
-      const rawExperiencesDataEles = await page.$$(
+      const rawDataEles = await page.$$(
         "main > section.artdeco-card.ember-view"
       );
 
       let rawExperiencesData: RawExperience[] = [];
-      for (const handle of rawExperiencesDataEles) {
+      for (const handle of rawDataEles) {
         const val = await handle.evaluate((ele) => {
           const txtH = ele.querySelector(
             ".pvs-header__container .pvs-header__title span.visually-hidden"
@@ -903,56 +903,66 @@ export class LinkedInProfileScraper {
 
       statusLog(logSection, `Parsing education data...`, scraperSessionId);
 
-      // TODO- parse education data
-      const rawEducationData: RawEducation[] = await page.$$eval(
-        "#education-section ul > .ember-view",
-        (nodes) => {
-          // Note: the $$eval context is the browser context.
-          // So custom methods you define in this file are not available within this $$eval.
-          let data: RawEducation[] = [];
-          for (const node of nodes) {
-            const schoolNameElement = node.querySelector(
-              "h3.pv-entity__school-name"
-            );
-            const schoolName = schoolNameElement?.textContent || null;
-
-            const degreeNameElement = node.querySelector(
-              ".pv-entity__degree-name .pv-entity__comma-item"
-            );
-            const degreeName = degreeNameElement?.textContent || null;
-
-            const fieldOfStudyElement = node.querySelector(
-              ".pv-entity__fos .pv-entity__comma-item"
-            );
-            const fieldOfStudy = fieldOfStudyElement?.textContent || null;
-
-            // const gradeElement = node.querySelector('.pv-entity__grade .pv-entity__comma-item');
-            // const grade = (gradeElement && gradeElement.textContent) ? window.getCleanText(fieldOfStudyElement.textContent) : null;
-
-            const dateRangeElement = node.querySelectorAll(
-              ".pv-entity__dates time"
+      let rawEducationData: RawEducation[] = [];
+      for (const handle of rawDataEles) {
+        const val = await handle.evaluate((ele) => {
+          const txtH = ele.querySelector(
+            ".pvs-header__container .pvs-header__title span.visually-hidden"
+          )?.textContent;
+          let tempData = [];
+          if (txtH === "Education") {
+            const dataElements = ele.querySelectorAll(
+              ".pvs-list__outer-container ul li.artdeco-list__item"
             );
 
-            const startDatePart =
-              (dateRangeElement && dateRangeElement[0]?.textContent) || null;
-            const startDate = startDatePart || null;
+            for (const liEle of dataElements) {
+              let schoolNameElement = liEle.querySelector(
+                "div > div.display-flex.flex-column.full-width.align-self-center > div.display-flex.flex-row.justify-space-between > a > div > span > span.visually-hidden"
+              );
+              const schoolName = schoolNameElement?.textContent || null;
 
-            const endDatePart =
-              (dateRangeElement && dateRangeElement[1]?.textContent) || null;
-            const endDate = endDatePart || null;
+              const degreeNameElement = liEle.querySelector(
+                "div > div.display-flex.flex-column.full-width.align-self-center > div.display-flex.flex-row.justify-space-between > a > span:nth-child(2) > span.visually-hidden"
+              );
+              const degreeName = degreeNameElement?.textContent || null;
 
-            data.push({
-              schoolName,
-              degreeName,
-              fieldOfStudy,
-              startDate,
-              endDate,
-            });
+              const fieldOfStudyElement = liEle.querySelector(
+                "div > div.display-flex.flex-column.full-width.align-self-center > div.pvs-list__outer-container > ul > li > div > div > div > div > div > span.visually-hidden"
+              );
+              const fieldOfStudy = fieldOfStudyElement?.textContent || null;
+
+              // const gradeElement = liEle.querySelector('.pv-entity__grade .pv-entity__comma-item');
+              // const grade = (gradeElement && gradeElement.textContent) ? window.getCleanText(fieldOfStudyElement.textContent) : null;
+
+              const dateRangeElement = liEle.querySelector(
+                "div > div.display-flex.flex-column.full-width.align-self-center > div.display-flex.flex-row.justify-space-between > a > span.t-14.t-normal.t-black--light > span.visually-hidden"
+              );
+
+              const startDatePart =
+                (dateRangeElement && dateRangeElement?.textContent) || "";
+
+              let startDate = startDatePart.split("-")[0] || "";
+              startDate = startDate.trim() || null;
+
+              const endDatePart =
+                (dateRangeElement && dateRangeElement?.textContent) || "";
+              let endDate = endDatePart.split("-")[1] || "";
+              endDate = endDate.trim() || null;
+
+              tempData.push({
+                schoolName,
+                degreeName,
+                fieldOfStudy,
+                startDate,
+                endDate,
+              });
+            }
+
+            return tempData;
           }
-
-          return data;
-        }
-      );
+        });
+        val && rawEducationData.push(val);
+      }
 
       // Convert the raw data to clean data using our utils
       // So we don't have to inject our util methods inside the browser context, which is too damn difficult using TypeScript
@@ -983,26 +993,31 @@ export class LinkedInProfileScraper {
         scraperSessionId
       );
 
-      const rawVolunteerExperiences: RawVolunteerExperience[] =
-        await page.$$eval(
-          ".pv-profile-section.volunteering-section ul > li.ember-view",
-          (nodes) => {
-            // Note: the $$eval context is the browser context.
-            // So custom methods you define in this file are not available within this $$eval.
-            let data: RawVolunteerExperience[] = [];
-            for (const node of nodes) {
-              const titleElement = node.querySelector(
-                ".pv-entity__summary-info h3"
+      let rawVolunteerExperiences: RawVolunteerExperience[] = [];
+      for (const handle of rawDataEles) {
+        const val = await handle.evaluate((ele) => {
+          const txtH = ele.querySelector(
+            ".pvs-header__container .pvs-header__title span.visually-hidden"
+          )?.textContent;
+          let tempData = [];
+          if (txtH === "Volunteering") {
+            const dataElements = ele.querySelectorAll(
+              ".pvs-list__outer-container ul li.artdeco-list__item"
+            );
+
+            for (const liEle of dataElements) {
+              let titleElement = liEle.querySelector(
+                "div > div.display-flex.flex-column.full-width.align-self-center > div.display-flex.flex-row.justify-space-between > div.display-flex.flex-column.full-width > div > span > span.visually-hidden"
               );
               const title = titleElement?.textContent || null;
 
-              const companyElement = node.querySelector(
-                ".pv-entity__summary-info span.pv-entity__secondary-title"
+              const companyElement = liEle.querySelector(
+                "div > div.display-flex.flex-column.full-width.align-self-center > div.display-flex.flex-row.justify-space-between > div.display-flex.flex-column.full-width > span:nth-child(2) > span.visually-hidden"
               );
               const company = companyElement?.textContent || null;
 
-              const dateRangeElement = node.querySelector(
-                ".pv-entity__date-range span:nth-child(2)"
+              const dateRangeElement = liEle.querySelector(
+                "div > div.display-flex.flex-column.full-width.align-self-center > div.display-flex.flex-row.justify-space-between > div.display-flex.flex-column.full-width > span.t-14.t-normal.t-black--light > span.visually-hidden"
               );
               const dateRangeText = dateRangeElement?.textContent || null;
               const startDatePart = dateRangeText?.split("–")[0] || null;
@@ -1016,12 +1031,12 @@ export class LinkedInProfileScraper {
                   ? endDatePart.trim()
                   : "Present";
 
-              const descriptionElement = node.querySelector(
-                ".pv-entity__description"
+              const descriptionElement = liEle.querySelector(
+                "div > div.display-flex.flex-column.full-width.align-self-center > div.pvs-list__outer-container > ul > li > div > div > div > div > span.visually-hidden"
               );
               const description = descriptionElement?.textContent || null;
 
-              data.push({
+              tempData.push({
                 title,
                 company,
                 startDate,
@@ -1031,9 +1046,11 @@ export class LinkedInProfileScraper {
               });
             }
 
-            return data;
+            return tempData;
           }
-        );
+        });
+        val && rawVolunteerExperiences.push(val);
+      }
 
       // Convert the raw data to clean data using our utils
       // So we don't have to inject our util methods inside the browser context, which is too damn difficult using TypeScript
@@ -1063,29 +1080,51 @@ export class LinkedInProfileScraper {
 
       statusLog(logSection, `Parsing skills data...`, scraperSessionId);
 
-      const skills: Skill[] = await page.$$eval(
-        ".pv-skill-categories-section ol > .ember-view",
-        (nodes) => {
-          // Note: the $$eval context is the browser context.
-          // So custom methods you define in this file are not available within this $$eval.
+      // TODO- parse skill data
 
-          return nodes.map((node) => {
-            const skillName = node.querySelector(
-              ".pv-skill-category-entity__name-text"
-            );
-            const endorsementCount = node.querySelector(
-              ".pv-skill-category-entity__endorsement-count"
+      let skills: Skill[] = [];
+      for (const handle of rawDataEles) {
+        const val = await handle.evaluate((ele) => {
+          const txtH = ele.querySelector(
+            ".pvs-header__container .pvs-header__title span.visually-hidden"
+          )?.textContent;
+          let tempData = [];
+          if (txtH === "Skills") {
+            const dataElements = ele.querySelectorAll(
+              ".pvs-list__outer-container ul li.artdeco-list__item"
             );
 
-            return {
-              skillName: skillName ? skillName.textContent?.trim() : null,
-              endorsementCount: endorsementCount
-                ? parseInt(endorsementCount.textContent?.trim() || "0")
-                : 0,
-            } as Skill;
-          }) as Skill[];
-        }
-      );
+            for (const liEle of dataElements) {
+              let skillName =
+                liEle.querySelector(
+                  "div > div.display-flex.flex-column.full-width.align-self-center > div.display-flex.flex-row.justify-space-between > div.display-flex.flex-column.full-width > div > span > span.visually-hidden"
+                ) ||
+                liEle.querySelector(
+                  "div > div.display-flex.flex-column.full-width.align-self-center > div.display-flex.flex-row.justify-space-between > a > div > span.mr1.hoverable-link-text.t-bold > span.visually-hidden"
+                );
+
+              let endorsementCount = liEle.querySelector(
+                "div > div.display-flex.flex-column.full-width.align-self-center > div.display-flex.flex-row.justify-space-between > a > div > span.pvs-entity__supplementary-info.t-14.t-black--light.t-normal.mr1 > span.visually-hidden"
+              );
+              endorsementCount = endorsementCount?.textContent || "";
+
+              endorsementCount = endorsementCount.replace("·", "");
+
+              tempData.push({
+                skillName: skillName ? skillName.textContent?.trim() : null,
+                endorsementCount: endorsementCount
+                  ? parseInt(endorsementCount?.trim() || "0")
+                  : 0,
+              });
+            }
+
+            return tempData;
+          }
+        });
+        val && skills.push(val);
+      }
+
+      console.log(skills);
 
       statusLog(
         logSection,
