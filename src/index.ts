@@ -804,11 +804,13 @@ export class LinkedInProfileScraper {
 
               let employmentType = employmentTypeElement?.textContent || null;
 
-              employmentType = employmentType?.split("·")[1].trim() || null;
+              employmentType = employmentType?.split("·")[1] || "";
+              employmentType = employmentType.trim() || null;
 
               const companyElement = employmentType || "";
 
-              const company = companyElement?.split("·")[0].trim() || null;
+              let company = companyElement?.split("·")[0].trim() || "";
+              company = company.trim() || null;
 
               const descriptionElement = liEle.querySelector(
                 "div > div.display-flex.flex-column.full-width.align-self-center > div.pvs-list__outer-container > ul > li > div > ul > li > div > div > div > div > span.visually-hidden"
@@ -1128,6 +1130,136 @@ export class LinkedInProfileScraper {
         scraperSessionId
       );
 
+      let awards = [];
+      for (const handle of rawDataEles) {
+        const val = await handle.evaluate((ele) => {
+          const txtH = ele.querySelector(
+            ".pvs-header__container .pvs-header__title span.visually-hidden"
+          )?.textContent;
+          let tempData = [];
+          if (txtH === "Honors & awards") {
+            const dataElements = ele.querySelectorAll(
+              ".pvs-list__outer-container ul li.artdeco-list__item"
+            );
+
+            for (const liEle of dataElements) {
+              let awardName = liEle.querySelector(
+                "div > div.display-flex.flex-column.full-width.align-self-center > div.display-flex.flex-row.justify-space-between > div.display-flex.flex-column.full-width > div > span > span.visually-hidden"
+              );
+              awardName = awardName?.textContent || null;
+
+              let issuedByEle = liEle.querySelector(
+                "div > div.display-flex.flex-column.full-width.align-self-center > div.display-flex.flex-row.justify-space-between > div.display-flex.flex-column.full-width > span > span.visually-hidden"
+              );
+              let issuedBy = issuedByEle?.textContent || "";
+              issuedBy = issuedBy.split("·")[0];
+              issuedBy = issuedBy.replace("issued by", "");
+
+              let issuedDate = issuedByEle?.textContent || "";
+              issuedDate = issuedDate.split("·")[1];
+
+              tempData.push({
+                awardName,
+                issuedBy,
+                issuedDate,
+              });
+            }
+
+            return tempData;
+          }
+        });
+        val && awards.push(val);
+      }
+
+      statusLog(
+        logSection,
+        `Got awards data: ${JSON.stringify(awards)}`,
+        scraperSessionId
+      );
+
+      let publications = [];
+      for (const handle of rawDataEles) {
+        const val = await handle.evaluate((ele) => {
+          const txtH = ele.querySelector(
+            ".pvs-header__container .pvs-header__title span.visually-hidden"
+          )?.textContent;
+          let tempData = [];
+          if (txtH === "Publications") {
+            const dataElements = ele.querySelectorAll(
+              ".pvs-list__outer-container ul li.artdeco-list__item"
+            );
+
+            for (const liEle of dataElements) {
+              let publicationName = liEle.querySelector(
+                "div > div.display-flex.flex-column.full-width.align-self-center > div.display-flex.flex-row.justify-space-between > div.display-flex.flex-column.full-width > div > span > span.visually-hidden"
+              );
+              publicationName = publicationName?.textContent || null;
+
+              let issuedOnEle = liEle.querySelector(
+                "div > div.display-flex.flex-column.full-width.align-self-center > div.display-flex.flex-row.justify-space-between > div.display-flex.flex-column.full-width > span > span.visually-hidden"
+              );
+              let issuedOn = issuedOnEle?.textContent || "";
+              issuedOn = issuedOn.split("·")[0];
+              issuedOn = issuedOn.trim();
+
+              let issuedDate = issuedOnEle?.textContent || "";
+              issuedDate = issuedDate.split("·")[1];
+              issuedDate = issuedDate.trim();
+
+              tempData.push({
+                publicationName,
+                issuedOn,
+                issuedDate,
+              });
+            }
+
+            return tempData;
+          }
+        });
+        val && publications.push(val);
+      }
+
+      statusLog(
+        logSection,
+        `Got Publications data: ${JSON.stringify(publications)}`,
+        scraperSessionId
+      );
+
+      let recommendations = [];
+      for (const handle of rawDataEles) {
+        const val = await handle.evaluate((ele) => {
+          const txtH = ele.querySelector(
+            ".pvs-header__container .pvs-header__title span.visually-hidden"
+          )?.textContent;
+          let tempData = [];
+          if (txtH === "Recommendations") {
+            const dataElements = ele.querySelectorAll(
+              ".pvs-list__outer-container ul li.artdeco-list__item"
+            );
+
+            for (const liEle of dataElements) {
+              let recommendedBy = liEle.querySelector(
+                "div > div.display-flex.flex-column.full-width.align-self-center > div.display-flex.flex-row.justify-space-between > a > div > span > span.visually-hidden"
+              );
+              recommendedBy = recommendedBy?.textContent || null;
+
+              tempData.push({
+                recommendedBy,
+              });
+            }
+
+            return tempData;
+          }
+        });
+        val && recommendations.push(val);
+      }
+
+      statusLog(
+        logSection,
+        `Got Recommendations data: ${JSON.stringify(recommendations)}`,
+        scraperSessionId
+      );
+
       statusLog(
         logSection,
         `Done! Returned profile details for: ${profileUrl}`,
@@ -1153,6 +1285,9 @@ export class LinkedInProfileScraper {
         education,
         volunteerExperiences,
         skills,
+        awards,
+        publications,
+        recommendations,
       };
     } catch (err) {
       // Kill Puppeteer
