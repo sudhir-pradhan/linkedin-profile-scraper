@@ -762,11 +762,11 @@ export class LinkedInProfileScraper {
         description: getCleanText(rawUserProfileData.description),
       };
 
-      statusLog(
-        logSection,
-        `Got user profile data: ${JSON.stringify(userProfile)}`,
-        scraperSessionId
-      );
+      // statusLog(
+      //   logSection,
+      //   `Got user profile data: ${JSON.stringify(userProfile)}`,
+      //   scraperSessionId
+      // );
 
       statusLog(logSection, `Parsing experiences data...`, scraperSessionId);
 
