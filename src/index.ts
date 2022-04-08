@@ -897,11 +897,11 @@ export class LinkedInProfileScraper {
         }
       );
 
-      statusLog(
-        logSection,
-        `Got experiences data: ${JSON.stringify(experiences)}`,
-        scraperSessionId
-      );
+      // statusLog(
+      //   logSection,
+      //   `Got experiences data: ${JSON.stringify(experiences)}`,
+      //   scraperSessionId
+      // );
 
       statusLog(logSection, `Parsing education data...`, scraperSessionId);
 
@@ -983,11 +983,11 @@ export class LinkedInProfileScraper {
         };
       });
 
-      statusLog(
-        logSection,
-        `Got education data: ${JSON.stringify(education)}`,
-        scraperSessionId
-      );
+      // statusLog(
+      //   logSection,
+      //   `Got education data: ${JSON.stringify(education)}`,
+      //   scraperSessionId
+      // );
 
       statusLog(
         logSection,
@@ -1072,13 +1072,13 @@ export class LinkedInProfileScraper {
           };
         });
 
-      statusLog(
-        logSection,
-        `Got volunteer experience data: ${JSON.stringify(
-          volunteerExperiences
-        )}`,
-        scraperSessionId
-      );
+      // statusLog(
+      //   logSection,
+      //   `Got volunteer experience data: ${JSON.stringify(
+      //     volunteerExperiences
+      //   )}`,
+      //   scraperSessionId
+      // );
 
       statusLog(logSection, `Parsing skills data...`, scraperSessionId);
 
@@ -1124,11 +1124,11 @@ export class LinkedInProfileScraper {
         val && skills.push(val);
       }
 
-      statusLog(
-        logSection,
-        `Got skills data: ${JSON.stringify(skills)}`,
-        scraperSessionId
-      );
+      // statusLog(
+      //   logSection,
+      //   `Got skills data: ${JSON.stringify(skills)}`,
+      //   scraperSessionId
+      // );
 
       let awards = [];
       for (const handle of rawDataEles) {
@@ -1171,11 +1171,11 @@ export class LinkedInProfileScraper {
         val && awards.push(val);
       }
 
-      statusLog(
-        logSection,
-        `Got awards data: ${JSON.stringify(awards)}`,
-        scraperSessionId
-      );
+      // statusLog(
+      //   logSection,
+      //   `Got awards data: ${JSON.stringify(awards)}`,
+      //   scraperSessionId
+      // );
 
       let publications = [];
       for (const handle of rawDataEles) {
@@ -1219,11 +1219,11 @@ export class LinkedInProfileScraper {
         val && publications.push(val);
       }
 
-      statusLog(
-        logSection,
-        `Got Publications data: ${JSON.stringify(publications)}`,
-        scraperSessionId
-      );
+      // statusLog(
+      //   logSection,
+      //   `Got Publications data: ${JSON.stringify(publications)}`,
+      //   scraperSessionId
+      // );
 
       let recommendations = [];
       for (const handle of rawDataEles) {
@@ -1254,11 +1254,11 @@ export class LinkedInProfileScraper {
         val && recommendations.push(val);
       }
 
-      statusLog(
-        logSection,
-        `Got Recommendations data: ${JSON.stringify(recommendations)}`,
-        scraperSessionId
-      );
+      // statusLog(
+      //   logSection,
+      //   `Got Recommendations data: ${JSON.stringify(recommendations)}`,
+      //   scraperSessionId
+      // );
 
       statusLog(
         logSection,
