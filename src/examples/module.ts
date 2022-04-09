@@ -1,5 +1,8 @@
 require("dotenv").config();
 
+const IN_URL1 = "https://www.linkedin.com/in/jvandenaardweg/";
+const IN_URL2 = "https://www.linkedin.com/in/jeffiel/";
+
 (async () => {
   const { LinkedInProfileScraper } = require("../index");
 
@@ -14,9 +17,7 @@ require("dotenv").config();
   // Loading it in memory
   await scraper.setup();
 
-  const result = await scraper.run(
-    "https://www.linkedin.com/in/jvandenaardweg/"
-  );
+  const result = await scraper.run(IN_URL2);
 
   // When keepAlive: true, you can manually close the session using the method below.
   // This will free up your system's memory. Otherwise Puppeteer will sit idle in the background consuming memory.
