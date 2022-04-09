@@ -861,7 +861,7 @@ export class LinkedInProfileScraper {
 
       // await new Promise((resolve) => setTimeout(resolve, 50 * 1000));
 
-      console.log(JSON.stringify(rawExperiencesData));
+      // console.log(JSON.stringify(rawExperiencesData));
 
       // Convert the raw data to clean data using our utils
       // So we don't have to inject our util methods inside the browser context, which is too damn difficult using TypeScript
