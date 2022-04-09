@@ -1153,7 +1153,7 @@ export class LinkedInProfileScraper {
               );
               let issuedBy = issuedByEle?.textContent || "";
               issuedBy = issuedBy.split("·")[0];
-              issuedBy = issuedBy.replace("issued by", "");
+              issuedBy = issuedBy.replace(/issued by/i, "");
 
               let issuedDate = issuedByEle?.textContent || "";
               issuedDate = issuedDate.split("·")[1];
