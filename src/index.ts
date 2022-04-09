@@ -853,49 +853,52 @@ export class LinkedInProfileScraper {
             return tempData;
           }
         });
-        val && rawExperiencesData.push(val);
+
+        if (val && Array.isArray(val)) {
+          rawExperiencesData = val;
+        }
       }
 
       // await new Promise((resolve) => setTimeout(resolve, 50 * 1000));
 
-      // console.log(rawExperiencesData);
+      console.log(JSON.stringify(rawExperiencesData));
 
       // Convert the raw data to clean data using our utils
       // So we don't have to inject our util methods inside the browser context, which is too damn difficult using TypeScript
-      const experiences: Experience[] = rawExperiencesData.map(
-        (rawExperience) => {
-          const startDate = formatDate(rawExperience.startDate);
-          const endDate = formatDate(rawExperience.endDate) || null;
-          const endDateIsPresent = rawExperience.endDateIsPresent;
+      let experiences: Experience[] = [];
 
-          const durationInDaysWithEndDate =
-            startDate && endDate && !endDateIsPresent
-              ? getDurationInDays(startDate, endDate)
-              : null;
-          const durationInDaysForPresentDate =
-            endDateIsPresent && startDate
-              ? getDurationInDays(startDate, new Date())
-              : null;
-          const durationInDays = endDateIsPresent
-            ? durationInDaysForPresentDate
-            : durationInDaysWithEndDate;
+      rawExperiencesData.map((rawExperience) => {
+        const startDate = formatDate(rawExperience.startDate);
+        const endDate = formatDate(rawExperience.endDate) || null;
+        const endDateIsPresent = rawExperience.endDateIsPresent;
 
-          return {
-            ...rawExperience,
-            title: getCleanText(rawExperience.title),
-            company: getCleanText(rawExperience.company),
-            employmentType: getCleanText(rawExperience.employmentType),
-            location: rawExperience?.location
-              ? getLocationFromText(rawExperience.location)
-              : null,
-            startDate,
-            endDate,
-            endDateIsPresent,
-            durationInDays,
-            description: getCleanText(rawExperience.description),
-          };
-        }
-      );
+        const durationInDaysWithEndDate =
+          startDate && endDate && !endDateIsPresent
+            ? getDurationInDays(startDate, endDate)
+            : null;
+        const durationInDaysForPresentDate =
+          endDateIsPresent && startDate
+            ? getDurationInDays(startDate, new Date())
+            : null;
+        const durationInDays = endDateIsPresent
+          ? durationInDaysForPresentDate
+          : durationInDaysWithEndDate;
+
+        experiences.push({
+          ...rawExperience,
+          title: getCleanText(rawExperience.title),
+          company: getCleanText(rawExperience.company),
+          employmentType: getCleanText(rawExperience.employmentType),
+          location: rawExperience?.location
+            ? getLocationFromText(rawExperience.location)
+            : null,
+          startDate,
+          endDate,
+          endDateIsPresent,
+          durationInDays,
+          description: getCleanText(rawExperience.description),
+        });
+      });
 
       // statusLog(
       //   logSection,
@@ -963,16 +966,20 @@ export class LinkedInProfileScraper {
             return tempData;
           }
         });
-        val && rawEducationData.push(val);
+
+        if (val && Array.isArray(val)) {
+          rawEducationData = val;
+        }
       }
 
       // Convert the raw data to clean data using our utils
       // So we don't have to inject our util methods inside the browser context, which is too damn difficult using TypeScript
-      const education: Education[] = rawEducationData.map((rawEducation) => {
+      let education: Education[] = [];
+      rawEducationData.map((rawEducation) => {
         const startDate = formatDate(rawEducation.startDate);
         const endDate = formatDate(rawEducation.endDate);
 
-        return {
+        education.push({
           ...rawEducation,
           schoolName: getCleanText(rawEducation.schoolName),
           degreeName: getCleanText(rawEducation.degreeName),
@@ -980,7 +987,7 @@ export class LinkedInProfileScraper {
           startDate,
           endDate,
           durationInDays: getDurationInDays(startDate, endDate),
-        };
+        });
       });
 
       // statusLog(
@@ -1051,26 +1058,29 @@ export class LinkedInProfileScraper {
             return tempData;
           }
         });
-        val && rawVolunteerExperiences.push(val);
+
+        if (val && Array.isArray(val)) {
+          rawVolunteerExperiences = val;
+        }
       }
 
       // Convert the raw data to clean data using our utils
       // So we don't have to inject our util methods inside the browser context, which is too damn difficult using TypeScript
-      const volunteerExperiences: VolunteerExperience[] =
-        rawVolunteerExperiences.map((rawVolunteerExperience) => {
-          const startDate = formatDate(rawVolunteerExperience.startDate);
-          const endDate = formatDate(rawVolunteerExperience.endDate);
+      let volunteerExperiences: VolunteerExperience[] = [];
+      rawVolunteerExperiences.map((rawVolunteerExperience) => {
+        const startDate = formatDate(rawVolunteerExperience.startDate);
+        const endDate = formatDate(rawVolunteerExperience.endDate);
 
-          return {
-            ...rawVolunteerExperience,
-            title: getCleanText(rawVolunteerExperience.title),
-            company: getCleanText(rawVolunteerExperience.company),
-            description: getCleanText(rawVolunteerExperience.description),
-            startDate,
-            endDate,
-            durationInDays: getDurationInDays(startDate, endDate),
-          };
+        volunteerExperiences.push({
+          ...rawVolunteerExperience,
+          title: getCleanText(rawVolunteerExperience.title),
+          company: getCleanText(rawVolunteerExperience.company),
+          description: getCleanText(rawVolunteerExperience.description),
+          startDate,
+          endDate,
+          durationInDays: getDurationInDays(startDate, endDate),
         });
+      });
 
       // statusLog(
       //   logSection,
@@ -1121,7 +1131,10 @@ export class LinkedInProfileScraper {
             return tempData;
           }
         });
-        val && skills.push(val);
+
+        if (val && Array.isArray(val)) {
+          skills = val;
+        }
       }
 
       // statusLog(
@@ -1168,7 +1181,10 @@ export class LinkedInProfileScraper {
             return tempData;
           }
         });
-        val && awards.push(val);
+
+        if (val && Array.isArray(val)) {
+          awards = val;
+        }
       }
 
       // statusLog(
@@ -1216,7 +1232,10 @@ export class LinkedInProfileScraper {
             return tempData;
           }
         });
-        val && publications.push(val);
+
+        if (val && Array.isArray(val)) {
+          publications = val;
+        }
       }
 
       // statusLog(
@@ -1251,7 +1270,10 @@ export class LinkedInProfileScraper {
             return tempData;
           }
         });
-        val && recommendations.push(val);
+
+        if (val && Array.isArray(val)) {
+          recommendations = val;
+        }
       }
 
       // statusLog(
