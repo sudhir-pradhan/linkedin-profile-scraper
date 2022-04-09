@@ -1,13 +1,13 @@
 require("dotenv").config();
 
-import { LinkedInProfileScraper } from "../index";
-
 (async () => {
+  const { LinkedInProfileScraper } = require("../index");
+
   const scraper = new LinkedInProfileScraper({
     sessionCookieValue: `${process.env.LINKEDIN_SESSION_COOKIE_VALUE}`,
     keepAlive: false,
     headless: !false,
-    timeout: 50 * 1000,
+    timeout: 20 * 1000,
   });
 
   // Prepare the scraper
@@ -22,5 +22,6 @@ import { LinkedInProfileScraper } from "../index";
   // This will free up your system's memory. Otherwise Puppeteer will sit idle in the background consuming memory.
   // await scraper.close()
 
-  console.log("result: ", result);
+  // console.log("result: ", result);
+  console.log("scrape done!");
 })();
