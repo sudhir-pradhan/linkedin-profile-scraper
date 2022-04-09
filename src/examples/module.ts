@@ -17,12 +17,12 @@ const IN_URL2 = "https://www.linkedin.com/in/jeffiel/";
   // Loading it in memory
   await scraper.setup();
 
-  const result = await scraper.run(IN_URL2);
+  const result = await scraper.run(IN_URL1);
 
   // When keepAlive: true, you can manually close the session using the method below.
   // This will free up your system's memory. Otherwise Puppeteer will sit idle in the background consuming memory.
   // await scraper.close()
 
-  // console.log("result: ", result);
+  console.log("result: ", result);
   console.log("scrape done!");
 })();

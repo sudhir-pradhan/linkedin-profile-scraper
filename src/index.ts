@@ -597,12 +597,16 @@ export class LinkedInProfileScraper {
         scraperSessionId
       );
 
-      await page.goto(profileUrl, {
-        // Use "networkidl2" here and not "domcontentloaded".
-        // As with "domcontentloaded" some elements might not be loaded correctly, resulting in missing data.
-        waitUntil: "networkidle2",
-        timeout: this.options.timeout,
-      });
+      // await page.goto(profileUrl, {
+      //   // Use "networkidl2" here and not "domcontentloaded".
+      //   // As with "domcontentloaded" some elements might not be loaded correctly, resulting in missing data.
+      //   waitUntil: "networkidle2",
+      //   timeout: this.options.timeout,
+      // });
+
+      await page.goto(profileUrl);
+
+      await page.waitForSelector("main > section.artdeco-card.ember-view");
 
       const url = page.url();
 
@@ -704,6 +708,14 @@ export class LinkedInProfileScraper {
 
       // await new Promise((resolve) => setTimeout(resolve, 50 * 1000));
 
+      statusLog(
+        logSection,
+        "Waiting for 5 seconds before Parsing...",
+        scraperSessionId
+      );
+
+      await new Promise((resolve) => setTimeout(resolve, 5 * 1000));
+
       statusLog(logSection, "Parsing profile data...", scraperSessionId);
 
       const rawUserProfileData: RawProfile = await page.evaluate(() => {
@@ -771,7 +783,6 @@ export class LinkedInProfileScraper {
       statusLog(logSection, `Parsing experiences data...`, scraperSessionId);
 
       // await page.waitForNavigation();
-      await new Promise((resolve) => setTimeout(resolve, 1 * 1000));
 
       // const rawExperiencesData: RawExperience[] = await page.$$(
       //   "main > section.artdeco-card.ember-view");
