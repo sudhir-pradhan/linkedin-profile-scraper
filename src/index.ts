@@ -1227,11 +1227,11 @@ export class LinkedInProfileScraper {
               );
               let issuedOn = issuedOnEle?.textContent || "";
               issuedOn = issuedOn.split("·")[0];
-              issuedOn = issuedOn.trim();
+              issuedOn = issuedOn?.trim();
 
               let issuedDate = issuedOnEle?.textContent || "";
               issuedDate = issuedDate.split("·")[1];
-              issuedDate = issuedDate.trim();
+              issuedDate = issuedDate?.trim();
 
               tempData.push({
                 publicationName,
