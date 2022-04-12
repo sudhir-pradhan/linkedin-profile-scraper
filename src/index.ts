@@ -818,7 +818,7 @@ export class LinkedInProfileScraper {
               employmentType = employmentType?.split("·")[1] || "";
               employmentType = employmentType.trim() || null;
 
-              const companyElement = employmentType || "";
+              const companyElement = employmentTypeElement?.textContent || "";
 
               let company = companyElement?.split("·")[0].trim() || "";
               company = company.trim() || null;
