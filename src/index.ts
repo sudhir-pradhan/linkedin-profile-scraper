@@ -724,7 +724,7 @@ export class LinkedInProfileScraper {
         const url = window.location.href;
 
         const fullNameElement = profileSection?.querySelector(
-          ".pv-text-details__left-panel div:first-child"
+          ".pv-text-details__left-panel div:first-child h1"
         );
         const fullName = fullNameElement?.textContent || null;
 
